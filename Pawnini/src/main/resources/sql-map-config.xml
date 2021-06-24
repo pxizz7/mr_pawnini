@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+<configuration>
+	<!-- Alias 설정 -->
+	<typeAliases>
+		<typeAlias alias="paws" type="com.pawnini.model.paws.PawsDTO"/>
+		<typeAlias alias="cs" type="com.pawnini.model.cs.CsDTO"/>
+		<typeAlias alias="cs_reply" type="com.pawnini.model.cs.Cs_replyDTO"/>
+		<typeAlias alias="review" type="com.pawnini.model.review.ReviewDTO"/>
+		<typeAlias alias="reviewCriteria" type="com.pawnini.model.review.SearchCriteria"/>
+		<typeAlias alias="reviewReply" type="com.pawnini.model.review.ReviewReplyDTO"/>
+		<typeAlias alias="reviewLike" type="com.pawnini.model.review.ReviewLikeDTO"/>
+		<typeAlias alias="cart" type="com.pawnini.model.cart.CartDTO"/>
+		<typeAlias alias="cartList" type="com.pawnini.model.cart.CartListDTO"/>
+		<typeAlias alias="member" type="com.pawnini.model.member.MemberDTO"/>
+		<typeAlias alias="product" type="com.pawnini.model.product.ProductDTO"/>
+		<typeAlias alias="productCriteria" type="com.pawnini.model.product.ProductSearchCriteria"/>
+		<typeAlias alias="product_inq" type="com.pawnini.model.product_inq.Product_inqDTO"/>
+		<typeAlias alias="inq_rep" type="com.pawnini.model.product_inq.Inq_repDTO"/>
+		<typeAlias alias="product_inqCriteria" type="com.pawnini.model.product_inq.SearchCriteria"/>
+	</typeAliases>
+	
+	<!-- Sql Mapper 설정 -->
+	<mappers>
+		<mapper resource="mappings/cs-mapping.xml"/>
+		<mapper resource="mappings/cs_reply-mapping.xml"/>
+		<mapper resource="mappings/paws-mapping.xml"/>
+		<mapper resource="mappings/review-mapping.xml"/>		
+		<mapper resource="mappings/review-reply-mapping.xml"/>		
+		<mapper resource="mappings/member-mapping.xml"/>			
+		<mapper resource="mappings/product-mapping.xml"/>
+		<mapper resource="mappings/cart-mapping.xml"/>
+		<mapper resource="mappings/product_inq-mapping.xml"/>
+		<mapper resource="mappings/inq_rep-mapping.xml"/> 
+	</mappers>
+	
+</configuration>

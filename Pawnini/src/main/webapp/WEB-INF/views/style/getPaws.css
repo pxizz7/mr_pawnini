@@ -1,0 +1,77 @@
+@charset "UTF-8";
+body{
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif
+
+}
+.table_form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    margin-top: 100px;
+    box-shadow: 10px 5px 5px rgba(0,0,0,0.5);
+    width: 80%;
+    height: 1000px;
+    background-color:rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+.table{
+
+    border: none;
+    width: 80%;
+    height: 800px;
+    margin-top: 50px;
+    border-radius: 10px;
+    background-color: white;
+    border-collapse:collapse;
+    font-size: 25px;
+    border: 1px solid rgba(0,0,0,0.5);
+    border-radius: 25px;
+
+}
+.table_form input{
+outline: none;
+border-style: none;
+border-bottom:  1px solid rgba(0,0,0,0.5);
+    width: 20%;
+    height: 50px;
+    font-size: 20px;
+}
+
+.textarea{
+    width: 80%;
+    padding: 10px;
+    font-size: 15px;
+}
+.button{
+    margin-bottom: 80px;
+}
+.button :nth-child(1){
+    background-color: rgba(0,0,0,0.1);
+    font-size: 30px;
+    border-radius: 10px;
+    padding: 5px;
+}
+.button :nth-child(1):hover{
+    opacity: 0.7;
+}
+
+.button :nth-child(2){
+    background-color: rgba(0,0,0,0.1);
+    font-size: 30px;
+    border-radius: 10px;
+    padding: 5px;
+}
+.button :nth-child(2):hover{
+    opacity: 0.7;
+}
+.input_button{
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 10px;
+    font-size: 50px;
+    font-weight: 600;
+    margin-left: 600px;
+}
+.input_button:hover{
+    opacity: 0.7;
+}

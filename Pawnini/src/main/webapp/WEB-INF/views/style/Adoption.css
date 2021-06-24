@@ -1,0 +1,162 @@
+
+
+
+
+
+.advertisement_image{
+width: 100%;
+    background-position: center center;
+    background-size: cover;
+    width: 100%;
+    position: absolute;
+
+}
+
+.advertisement_h1{
+    display: flex;
+justify-content: center;
+align-items: center;
+  font-size: 150px;
+    position: absolute;
+    margin-top: 600px;
+    margin-left: 100px;
+
+}
+
+.Coment{
+    display: flex;
+    position: relative;
+}
+
+.leftMenu > li{
+    width: auto;
+    padding: 0 20px;
+    height: 100%;
+    line-height: 60px;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    
+}
+ .Header_ul > li:hover > .dropmenu{
+    visibility: visible;
+}
+ .Header_ul > li > .dropmenu{
+    width: 150px;
+    clear: both;
+    position: absolute;
+    left: 0;
+    margin-top: 50px;
+    text-align: left;
+    visibility: hidden;
+}
+ .Header_ul > li > .dropmenu > span{
+    width: 100%;
+    display: inline-block;
+    padding-left: 20px;
+    color: black;
+    font-weight: 600;
+    padding: 10px;
+}
+ .Header_ul > li > .dropmenu > span:hover{
+    font-weight: 700;
+    color:pink;
+    transition: color 0.5s ease-in-out;
+}
+.Dog_dropmenu{
+    height: 60px;
+    margin-top: 50px;
+}
+.Cat_dropmenu{
+    height: 60px;
+    margin-top: 50px;
+}
+
+
+body {
+    margin: 0px;
+  }
+  main {
+    padding-bottom: 100px;
+  }
+
+  section {
+    display: flex;
+    justify-content: space-between;
+    padding: 5%;
+  }
+  section div {
+ 
+  }
+
+
+
+
+  /* Scroll Animation (sa, 스크롤 애니메이션) */
+  .sa {
+    opacity: 0;
+    transition: all 1.2s ease;
+  }
+
+
+
+
+
+ 
+
+  /* 왼쪽에서 오른쪽으로 페이드 인 */
+  .sa-right {
+    transform: translate(-100px, 0);
+  }
+  /* 오른쪽에서 왼쪽으로 페이드 인 */
+  .sa-left {
+    transform: translate(100px, 0);
+  }
+  /* 왼쪽으로 회전하면서 페이드 인 */
+  .sa-rotateL {
+    transform: rotate(180deg);
+  }
+  /* 오른쪽으로 회전하면서 페이드 인 */
+
+  /* 작아진 상태에서 커지면서 페이드 인 */
+  .sa-scaleUp {
+    
+    transform: scale(0.5);
+  }
+  /* 커진 상태에서 작아지면서 페이드 인 */
+  .sa-scaleDown {
+    transform: scale(1.5);
+  }
+
+  .sa.show {
+    opacity: 1;
+    transform: none;
+  }
+
+  .bener_ul{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3,350px);
+    gap: 200px;
+    margin-left:200px;
+    text-decoration: none;
+    list-style: none;
+    text-shadow:  3px 3px 6px black;
+
+      
+  }
+
+  .bener_ul li:hover{
+    opacity: 0.7;
+   
+  }
+
+  .bener_text{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 50px;
+      padding-top: 100px;
+      
+  }
+  

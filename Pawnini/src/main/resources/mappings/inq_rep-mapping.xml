@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Inq_repDAO">
+
+	<resultMap id="inq_repResult" type="inq_rep" >
+		<id property="inq_rep_id" column="INQ_REP_ID"/>
+		<result property="inq_rep_name" column="INQ_REP_WRITER"/>
+		<result property="inq_rep_title" column="INQ_REP_TITLE"/>
+		<result property="inq_rep_content" column="INQ_REP_CONTENT"/>
+		<result property="inq_rep_date" column="INQ_REP_DATE"/>
+		<result property="inq_id" column="INQ_ID"/>
+	</resultMap>
+	
+	<!-- 답글 목록 불러오기 -->
+	<select id="getInq_repList" resultType="inq_rep">
+		SELECT 
+				INQ_REP_ID, 
+				INQ_REP_NAME, 
+				INQ_REP_TITLE,
+				INQ_REP_CONTENT, 
+				INQ_REP_DATE
+	    FROM INQ_REP
+	    WHERE INQ_ID = #{inq_id}
+	    ORDER BY INQ_REP_ID ASC
+	</select>
+	
+	<!-- 답글 삽입 -->
+	<insert id="insertInq_rep">
+		INSERT INTO INQ_REP(
+                    INQ_REP_ID,
+                    INQ_REP_TITLE,    
+                    INQ_REP_NAME,
+                    INQ_REP_CONTENT,
+                    INQ_ID)
+        VALUES (
+                    (SELECT NVL(MAX(INQ_REP_ID),0)+1 FROM INQ_REP),
+                    #{inq_rep_title},
+                    #{inq_rep_name},
+                    #{inq_rep_content},
+                    #{inq_id}
+                    )
+	</insert>
+	
+	<!-- 답글 조회 -->
+	<select id="getInq_rep" resultType="inq_rep">
+		SELECT  INQ_ID,
+                INQ_REP_ID,
+                INQ_REP_NAME,
+                INQ_REP_TITLE,
+                INQ_REP_CONTENT
+		FROM INQ_REP
+		WHERE INQ_REP_ID = #{inq_rep_id}
+	</select>
+	
+	<!-- 답글 수정 -->
+	<update id="updateInq_rep" parameterType="inq_rep">
+		UPDATE 	INQ_REP
+        	SET INQ_REP_TITLE = #{inq_rep_title},
+        		INQ_REP_CONTENT = #{inq_rep_content},
+                INQ_REP_DATE = SYSDATE
+   			WHERE INQ_REP_ID = #{inq_rep_id}
+	</update>
+	
+	<!-- 답글 삭제 -->
+	<delete id="deleteInq_rep" parameterType="inq_rep">
+		DELETE FROM INQ_REP
+         WHERE INQ_REP_ID = #{inq_rep_id}
+	</delete>
+	
+</mapper>

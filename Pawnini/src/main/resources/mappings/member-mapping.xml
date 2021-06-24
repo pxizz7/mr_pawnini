@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MemberDAO">
+
+	<resultMap id="memberResult" type="member" >
+		<id property="member_id" column="MEMBER_ID"/>
+		<result property="member_pwd" column="MEMBER_PWD"/>
+		<result property="member_name" column="MEMBER_NAME"/>
+		<result property="member_nickname" column="MEMBER_NICKNAME"/>
+		<result property="member_email" column="MEMBER_EMAIL"/>
+		<result property="member_phone" column="MEMBER_PHONE"/>
+		<result property="member_grade" column="MEMBER_GRADE"/>
+		<result property="member_regdate" column="MEMBER_REGDATE"/>
+		<result property="member_mileage" column="MEMBER_MILEAGE"/>
+		<result property="member_postcode" column="MEMBER_POSTCODE"/>
+		<result property="member_f_addr" column="MEMBER_F_ADDR"/>
+		<result property="member_s_addr" column="MEMBER_S_ADDR"/>
+	</resultMap>
+	
+	<!-- 회원 가입 -->
+	<insert id="insertMember">
+		<![CDATA[
+		INSERT INTO MEMBER (
+			MEMBER_ID,
+			MEMBER_PWD,
+			MEMBER_NAME,
+			MEMBER_NICKNAME,
+			MEMBER_EMAIL,
+			MEMBER_PHONE,
+			MEMBER_POSTCODE,
+			MEMBER_F_ADDR,
+			MEMBER_S_ADDR
+		) VALUES (
+			#{member_id},
+			#{member_pwd},
+			#{member_name},
+			#{member_nickname},
+			#{member_email},
+			#{member_phone},
+			#{member_postcode},
+			#{member_f_addr},
+			#{member_s_addr}
+		)		
+		]]>
+	</insert>
+	
+	<!-- 회원정보 수정 -->
+	<update id="updateMember">
+		UPDATE MEMBER
+		SET
+		MEMBER_PWD=#{member_pwd},
+		MEMBER_NAME=#{member_name},
+		MEMBER_NICKNAME=#{member_nickname},
+		MEMBER_POSTCODE=#{member_postcode},
+		MEMBER_F_ADDR=#{member_f_addr},
+		MEMBER_S_ADDR=#{member_s_addr}
+		WHERE
+		MEMBER_ID=#{member_id}
+	</update>
+	
+	<!-- 로그인 -->
+	<select id="login" resultType="member">
+		SELECT *
+    	FROM MEMBER
+    	WHERE MEMBER_ID = #{member_id}
+        AND MEMBER_PWD = #{member_pwd}
+	</select>
+	
+	<!-- 회원 삭제 -->
+	<delete id="deleteMember">
+		<![CDATA[
+		DELETE MEMBER
+		WHERE
+		MEMBER_ID=#{member_id}
+		]]>
+	</delete>	
+	
+	<!-- 등록 리스트 불러오기 -->
+	<select id="getMemberList" resultMap="memberResult">
+		SELECT *
+		FROM MEMBER
+		ORDER BY MEMBER_REGDATE DESC
+	</select>
+	
+	<!-- ID 중복 체크 -->
+	<select id="checkID" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM MEMBER
+		WHERE MEMBER_ID=#{member_id}
+	</select>
+	
+	<!-- 회원 확인 -->
+	<select id="checkMember" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM MEMBER
+		WHERE MEMBER_ID=#{member_id} AND MEMBER_PWD=#{member_pwd}
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+

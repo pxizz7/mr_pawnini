@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Cs_replyDAO">
+	<resultMap type="cs_reply" id="cs_replyResult">
+		<id property="cs_reply_id" column="CS_REPLY_ID" />
+		<result property="cs_reply_writer" column="CS_REPLY_WRITER" />
+		<result property="cs_reply_title" column="CS_REPLY_TITLE" />
+		<result property="cs_reply_show" column="CS_REPLY_SHOW" />
+		<result property="cs_reply_content" column="CS_REPLY_CONTENT" />
+		<result property="cs_reply_img" column="CS_REPLY_IMG" />
+		<result property="cs_reply_regdate" column="CS_REPLY_REGDATE" />
+		<result property="cs_id" column="CS_ID" />
+	</resultMap>
+	
+	
+
+<!--  sql of Cs~~~~ , can remove <![CDATE[]]? as long as no brackets involved-->
+<!--  고쳐야함 member_ids -->
+	<insert id="insertCs_reply" parameterType="cs_reply"> <!--  parameterType ="cs" refer to typeAlias @ sql-map-config.xml  -->
+			INSERT INTO CS_REPLY (
+				CS_REPLY_ID,
+		    	CS_REPLY_TITLE, 
+		        CS_REPLY_WRITER, 
+		        CS_REPLY_SHOW, 
+		        CS_REPLY_CONTENT,   
+		        CS_REPLY_IMG,         
+		        CS_ID
+		    )
+			VALUES(
+				(SELECT NVL(MAX(CS_REPLY_ID), 10000)+1 FROM CS_REPLY),
+				#{cs_reply_title}, 
+			    #{cs_reply_writer}, 
+			    #{cs_reply_show}, 
+			    #{cs_reply_content},
+			    #{cs_reply_img}, 
+			    #{member_id}
+			 )
+	</insert>
+
+	<update id="updateCs_reply"  parameterType="cs_reply">
+			UPDATE CS_REPLY 
+			SET  
+			CS_REPLY_TITLE=#{cs_reply_title}, 
+			CS_REPLY_WRITER=#{cs_reply_writer}, 
+			CS_REPLY_SHOW=#{cs_reply_show},
+			CS_REPLY_CONTENT=#{cs_reply_content},
+			CS_REPLY_IMG=#{cs_reply_img}
+			WHERE CS_REPLY_ID=#{cs_reply_id}
+	</update>
+
+	<delete id="deleteCs_reply">
+			DELETE CS_REPLY WHERE CS_REPLY_ID=#{cs_reply_id}
+	</delete>
+	
+	<select id="getCs_reply" resultType="cs_reply"> <!-- resultMap type ="cs_reply"  -->
+			SELECT * FROM CS_REPLY WHERE CS_REPLY_ID = #{cs_reply_id}
+	</select>
+</mapper>
+  

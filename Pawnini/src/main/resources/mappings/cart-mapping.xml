@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CartDAO">
+
+	<resultMap id="cartResult" type="cart" >
+		<id property="cart_id" column="CART_ID"/>
+		<result property="cart_amount" column="CART_AMOUNT"/>
+		<result property="product_id" column="PRODUCT_ID"/>
+		<result property="member_id" column="MEMBER_ID"/>
+	</resultMap>
+	
+	<!-- 카트 추가 -->
+	<insert id="addToCart" parameterType="cart">
+	<![CDATA[
+		 INSERT INTO CART(CART_ID, CART_AMOUNT, PRODUCT_ID, MEMBER_ID)  
+		 VALUES(
+		 		CONCAT(TO_NUMBER(TO_CHAR(SYSDATE, 'YYMMDD')), LPAD(CART_SEQ.NEXTVAL, 2, 0)),
+		 		#{cart_amount},
+		 		#{product_id},
+		 		#{member_id}
+		 		)
+	]]>
+	</insert>
+	
+	<!-- 카트 목록 -->
+	<select id="getCartList" resultType="cartList">
+		SELECT
+            ROW_NUMBER() OVER(ORDER BY C.CART_ID DESC) AS CART_RNUM,
+            C.CART_ID, C.MEMBER_ID, C.CART_AMOUNT,
+            P.PRODUCT_ID, P.PRODUCT_NAME, P.PRODUCT_PRICE, P.PRODUCT_THUMB_IMG
+		FROM CART C
+            INNER JOIN PRODUCT P ON C.PRODUCT_ID = P.PRODUCT_ID
+            WHERE C.MEMBER_ID = #{member_id}
+	</select>
+	
+	<!-- 카트 목록 삭제 -->
+	<delete id="deleteCart">
+	<![CDATA[
+		DELETE CART
+		WHERE CART_ID = #{cart_id} AND MEMBER_ID = #{member_id}
+	]]>
+	</delete>
+	
+</mapper>

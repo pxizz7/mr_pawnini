@@ -1,0 +1,40 @@
+
+
+.Guide{
+   background-color: #F4F4F5;
+   display: flex;
+   height: 40px;
+   align-items: center;
+   justify-content: center;
+   font-weight: 600;
+}
+.Guide span{
+   opacity: 0.7;
+}
+
+
+.text{
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin-top: 80px;
+}
+ input{
+   border:2px solid #fdcb6e ;
+   outline: #fd79a8;
+   justify-content: center;
+   align-items: center;
+   margin-bottom: 10px;
+   height: 30px;
+   border-radius: 10px;
+   margin-left: 20px;
+   z-index:1 ;
+
+}
+.Form_section{
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   margin-bottom: 60px;
+}

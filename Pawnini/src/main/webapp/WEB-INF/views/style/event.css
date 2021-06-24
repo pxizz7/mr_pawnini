@@ -1,0 +1,98 @@
+
+.event{
+margin-left: 150px;
+
+
+}
+.event_Title{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+    text-shadow:  2px 2px 2px gray;    
+}
+
+.event_grid{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows:repeat(5,300px) ;
+    gap: 80px;
+    width: 80%;
+    text-decoration: none;
+    list-style: none;
+    text-shadow:  1px 1px 2px white;
+}
+.event_grid  li:hover{
+    box-shadow: 6px 6px 4px 4px rgba(0, 0, 0, 0.5);
+    transition:box-shadow 0.5s ease-in-out ;
+    opacity: 0.7;
+}
+
+.event_grid li:nth-child(1){
+    background-image: url("../images/dog12.jpg");
+    background-position: center center;
+    background-size: cover;
+    color:black;
+    font-family: 600;
+}
+.event_grid li:nth-child(2){
+    background-image: url("../images/dog10.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+.event_grid li:nth-child(3){
+    background-image: url("../images/dog10.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+.event_grid li:nth-child(4){
+    background-image: url("../images/dog10.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+.event_grid li:nth-child(5){
+    background-image: url("../images/dog3.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+.event_grid li:nth-child(6){
+    background-image: url("../images/dog4.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+.event_grid li:nth-child(7){
+    background-image: url("../images/dog5.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+.event_grid li:nth-child(8){
+    background-image: url("../images/dog6.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+
+.event_grid li:nth-child(9){
+    background-image: url("../images/dog12.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+.event_grid li:nth-child(10){
+    background-image: url("../images/dog12.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+.event_grid li:nth-child(11){
+    background-image: url("../images/dog12.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+.event_grid li:nth-child(12){
+    background-image: url("../images/dog12.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+.event_grid li:nth-child(13){
+    background-image: url("../images/dog12.jpg");
+    background-position: center center;
+    background-size: cover;
+}

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ReviewDAO">
+
+	<resultMap id="reviewResult" type="review" >
+		<id property="rev_id" column="REV_ID"/>
+		<result property="rev_writer" column="REV_WRITER"/>
+		<result property="rev_title" column="REV_TITLE"/>
+		<result property="rev_content" column="REV_CONTENT"/>
+		<result property="rev_f_category" column="REV_F_CATEGORY"/>
+		<result property="rev_date" column="REV_DATE"/>
+		<result property="rev_show" column="REV_SHOW"/>
+		<result property="rev_like_cnt" column="REV_LIKE_CNT"/>
+		<result property="rev_com_cnt" column="REV_COM_CNT"/>
+		<result property="rev_stars" column="REV_STARS"/>
+		<result property="rev_f_img" column="REV_F_IMG"/>
+		<result property="rev_thumb_img" column="REV_THUMB_IMG"/>
+		<result property="member_id" column="MEMBER_ID"/>
+		<result property="product_id" column="PRODUCT_ID"/>
+	</resultMap>
+	
+	<!-- 후기 작성 -->
+	<insert id="insertReview" parameterType="review">
+	<![CDATA[
+		 INSERT INTO REVIEW 
+		 (
+		 REV_ID,
+		 REV_WRITER,
+		 REV_TITLE,
+		 REV_CONTENT,
+		 REV_F_CATEGORY,
+		 REV_SHOW,
+		 REV_STARS,
+		 REV_F_IMG,
+		 REV_THUMB_IMG,
+		 MEMBER_ID,
+		 PRODUCT_ID
+		 ) 
+		 VALUES (
+			 (SELECT NVL(MAX(REV_ID),0)+1 FROM REVIEW), 
+			 #{rev_writer},
+			 #{rev_title},
+			 #{rev_content},
+			 #{rev_f_category},
+			 #{rev_show},
+			 #{rev_stars},
+			 #{rev_f_img},
+			 #{rev_thumb_img},
+			 #{member_id},
+			 #{product_id}
+		 )
+	]]>
+	</insert>
+	
+	<!-- 후기 목록  w 검색 기능 -->
+	<select id="getReviewList" resultType="review" parameterType="reviewCriteria">
+		SELECT  REV_ID, 
+                PRODUCT_ID,
+                REV_WRITER,
+                REV_TITLE,
+                REV_F_CATEGORY,
+                REV_STARS,
+                REV_COM_CNT,
+                REV_DATE
+		 FROM ( 
+		        SELECT REV_ID,
+                       PRODUCT_ID,
+                       REV_WRITER,
+                       REV_TITLE,
+                       REV_F_CATEGORY,
+                       REV_STARS,
+                       REV_COM_CNT,
+                       REV_DATE,
+		               ROW_NUMBER() OVER(ORDER BY REV_ID DESC) AS RNUM
+		         FROM REVIEW
+		         WHERE 1=1 
+		         	<include refid="search"></include>
+		                       ) REV
+		WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
+		ORDER BY REV_ID DESC
+	</select>
+	
+	<!-- 후기 목록 개수 세기 -->
+	<select id="countReviewList" parameterType="reviewCriteria" resultType="int">
+		SELECT COUNT(REV_ID)
+		   FROM REVIEW
+		   WHERE 1=1
+		<include refid="search"></include>	
+		   AND REV_ID > 0
+	</select>
+	
+	<!-- 검색 기능 -->
+	<sql id="search">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND REV_TITLE LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'c'.toString()">AND REV_CONTENT LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'tc'.toString()">AND (REV_TITLE LIKE '%' || #{keyword} || '%') or (REV_CONTENT LIKE '%' || #{keyword} || '%')</if>
+		</if>
+	</sql>
+
+	<!-- 후기 상세보기 -->
+	<select id="getReview" resultType="review">
+	<![CDATA[
+		SELECT *
+		FROM REVIEW
+		WHERE REV_ID = #{rev_id}
+	]]>
+	</select>
+	
+	<!-- 후기 수정 -->
+	<update id="updateReview">
+	<![CDATA[
+		UPDATE REVIEW
+        	SET REV_TITLE = #{rev_title},
+                REV_F_CATEGORY = #{rev_f_category},
+                REV_CONTENT = #{rev_content},
+                REV_SHOW = #{rev_show},
+                REV_STARS = #{rev_stars},
+                REV_F_IMG = #{rev_f_img},
+                REV_THUMB_IMG = #{rev_thumb_img}
+   			WHERE REV_ID = #{rev_id}
+	]]>
+	</update>
+	
+	<!-- 후기 삭제 -->
+	<delete id="deleteReview">
+	<![CDATA[
+		DELETE FROM REVIEW
+		WHERE
+		REV_ID = #{rev_id}
+	]]>
+	</delete>
+	
+	<!-- 후기 댓글 개수 구하기 -->
+	<update id="updateReplyCount" parameterType="int">
+	<![CDATA[
+		UPDATE REVIEW
+        SET REV_COM_CNT = (
+        SELECT COUNT(REV_COM_ID) FROM REV_COM WHERE REV_ID = #{rev_id}
+        )
+        WHERE REV_ID = #{rev_id}
+	]]>
+	</update>
+	
+	
+	<!-- 후기 좋아요 생성 -->
+	<insert id="insertReviewLike">
+	<![CDATA[
+		INSERT INTO REV_LIKE (REV_LIKE_ID, REV_ID, MEMBER_ID)
+       	VALUES (
+               (SELECT NVL(MAX(REV_LIKE_ID),0)+1 FROM REV_LIKE),
+                #{rev_id}, 
+                #{member_id}
+                )
+	]]>
+	</insert>
+	
+	<!-- 후기 좋아요 삭제 -->
+	<delete id="deleteReviewLike">
+	<![CDATA[
+		DELETE FROM REV_LIKE
+         WHERE REV_ID = #{rev_id} AND MEMBER_ID = #{member_id}
+	]]>
+	</delete>
+	
+	<!-- 후기 좋아요 업데이트 -->
+	<update id="updateReviewLike">
+	<![CDATA[
+		UPDATE REVIEW
+	        SET REV_LIKE_CNT = (
+	        SELECT COUNT(*)
+	        FROM REV_LIKE
+	        WHERE REV_ID = #{rev_id})
+	        WHERE REV_ID = #{rev_id}
+	]]>
+	</update>
+	
+	<!-- 후기 좋아요 개수 구하기 // ID 중복 방지용  -->
+	<select id="getReviewLike" resultType="int" parameterType="reviewLike">
+		SELECT COUNT(REV_LIKE_ID)
+	    	FROM REV_LIKE
+			WHERE REV_ID = #{rev_id} AND MEMBER_ID = #{member_id}
+	</select>
+	
+	<!-- 후기 좋아요 총 개수 구하기 -->
+	<select id="getReviewLikeTotal" resultType="int" parameterType="reviewLike">
+		SELECT COUNT(REV_LIKE_ID)
+	    	FROM REV_LIKE
+			WHERE REV_ID = #{rev_id}
+	</select>
+</mapper>

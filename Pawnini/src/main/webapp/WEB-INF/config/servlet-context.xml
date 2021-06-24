@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+		">
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	<context:component-scan base-package="com.pawnini"></context:component-scan>	
+	<resources mapping="/imgUpload/**" location="/resources/imgUpload/" />
+	<resources mapping="/images/**" location="/WEB-INF/views/images/"/>
+	<resources mapping="/style/**" location="/WEB-INF/views/style/"/>
+	<resources mapping="/js/**" location="/WEB-INF/views/js/"/>
+	
+	<!-- 회원 정보 유지용 로그인 인터셉터 설정 -->
+	<beans:bean id="LoginInterceptor" class="com.pawnini.interceptors.LoginInterceptor"></beans:bean>
+	
+	<interceptors>
+		<interceptor>
+			<mapping path="/pawnini/*.do" />
+			<beans:ref bean="LoginInterceptor" />
+		</interceptor>
+	</interceptors>
+	
+	<annotation-driven />
+	
+	<!-- 업로드 패스 설정 --> 
+		<beans:bean class="java.lang.String" id="uploadPath">
+ 			<beans:constructor-arg value="C:\sts-bundle\stswk\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Pawnini\resources\" />
+		<!-- <beans:constructor-arg value="C:\sts-bundle\wks\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Pawnini\resources\" /> -->
+		</beans:bean>
+
+	<!-- 일반 파일 업로드 경로 -->
+	
+
+	<beans:bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver">
+ 		<beans:property name="maxUploadSize" value="10485760"/>
+	</beans:bean>
+	
+</beans:beans>

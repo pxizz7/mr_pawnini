@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="Product_inqDAO">
+	<!-- ResultSet 과 같은 역활 -->
+	<resultMap id="product_inqResult" type="product_inq" >
+		<id property="inq_id" column="INQ_ID" />
+		<result property="inq_name" column="INQ_NAME" />
+		<result property="inq_title" column="INQ_TITLE" />
+		<result property="inq_show" column="INQ_SHOW" />
+		<result property="inq_content" column="INQ_CONTENT" />
+		<result property="inq_image" column="INQ_IMAGE" />
+		<result property="inq_date" column="INQ_DATE" javaType="java.sql.Date" />
+		<result property="product_id" column="PRODUCT_ID"/>
+		<result property="member_id" column="MEMBER_ID"/>
+	</resultMap> 
+	<!-- 상품 문의 게시판  입력 -->
+	<insert id="insertProduct_inq" parameterType="product_inq">
+		<![CDATA[
+		INSERT INTO PRODUCT_INQ
+		 (
+		INQ_ID,
+		INQ_NAME,
+		INQ_TITLE,
+		INQ_SHOW,
+		INQ_CONTENT,
+		INQ_IMAGE,
+		PRODUCT_ID,
+		MEMBER_ID,
+		INQ_THUMB
+		)
+		VALUES 
+		(
+		PRODUCT_INQ_SEQ.NEXTVAL,
+		#{inq_name},
+		#{inq_title},
+		#{inq_show},
+		#{inq_content},
+		#{inq_image},
+		#{product_id},
+		#{member_id},
+		#{inq_thumb}
+		)
+		]]>
+	</insert>
+	
+	<!-- 상품 문의 게시판  수정 -->
+	<update id="updateProduct_inq" parameterType="product_inq">
+		<![CDATA[
+		UPDATE PRODUCT_INQ 
+		SET	INQ_NAME=#{inq_name},
+			INQ_TITLE=#{inq_title},
+			INQ_SHOW=#{inq_show},
+			INQ_CONTENT=#{inq_content},
+			INQ_IMAGE=#{inq_image},
+			PRODUCT_ID=#{product_id},
+			MEMBER_ID=#{member_id}
+		WHERE INQ_ID=#{inq_id}
+		]]>
+	</update>
+	
+	<!-- 답변 상태 변경  -->
+	<update id="updateInq_ans" >
+	<![CDATA[
+	UPDATE PRODUCT_INQ
+	SET INQ_ANS = 'Y'
+	WHERE INQ_ID=#{inq_id}
+	]]>
+	</update>
+	
+	<update id="cancleInq_ans">
+	<![CDATA[
+	UPDATE PRODUCT_INQ
+	SET INQ_ANS = 'N'
+	WHERE INQ_ID=#{inq_id}
+	]]>
+	</update>
+	<!-- 답변 상태 변경  end -->
+	
+	
+	<!-- 상품 문의 게시판  삭제 -->	
+	<delete id="deleteProduct_inq" >
+		<![CDATA[
+		DELETE PRODUCT_INQ
+		WHERE
+		INQ_ID=#{inq_id}
+		]]>
+	</delete>
+	
+	<!--상세보기 -->
+	<select id="getProduct_inq" resultType="product_inq">
+	<![CDATA[
+	SELECT * FROM PRODUCT_INQ
+	WHERE INQ_ID=#{inq_id}
+	]]>
+	</select>
+	
+	<!-- 상품 문의 목록 검색 기능 -->
+	<select id="getProduct_inqList" resultType="product_inq" parameterType="product_inqCriteria">
+		SELECT  INQ_ID, 
+                PRODUCT_ID,
+                INQ_NAME,
+                INQ_TITLE,          
+                INQ_DATE,
+                INQ_ANS,
+                INQ_SHOW
+		 FROM ( 
+		        SELECT INQ_ID,
+                       PRODUCT_ID,
+                       INQ_NAME,
+                       INQ_TITLE,
+                       INQ_DATE,
+                       INQ_ANS,
+                       INQ_SHOW,
+		               ROW_NUMBER() OVER(ORDER BY INQ_ID DESC) AS RNUM
+		         FROM PRODUCT_INQ
+		         WHERE 1=1 
+		         	<include refid="search"></include>
+		                       )
+		WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
+		ORDER BY INQ_ID DESC
+	</select>
+	
+	<!-- 상품 문의 목록 갯수 세기 -->
+	<select id="countProduct_inq" parameterType="product_inqCriteria" resultType="int">
+		SELECT COUNT(INQ_ID)
+		   FROM PRODUCT_INQ
+		   WHERE 1=1
+		<include refid="search"></include>	
+		   AND INQ_ID > 0
+	</select>
+	
+	<!--상품 문의  검색 기능 -->
+	<sql id="search">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND UPPER(INQ_TITLE) LIKE '%' || UPPER(#{keyword}) || '%'</if>
+			<if test="searchType == 'c'.toString()">AND UPPER(INQ_CONTENT) LIKE '%' || UPPER(#{keyword}) || '%'</if>
+			<if test="searchType == 'tc'.toString()">AND (UPPER(INQ_TITLE) LIKE '%' || UPPER(#{keyword}) || '%') or (UPPER(INQ_CONTENT) LIKE '%' || UPPER(#{keyword}) || '%')</if>
+		</if>
+	</sql>
+</mapper>
+

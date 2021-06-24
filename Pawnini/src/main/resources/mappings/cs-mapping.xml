@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CsDAO">
+
+	<resultMap type="cs" id="csResult">
+		<id property="cs_id" column="CS_ID" />
+		<result property="cs_title" column="CS_TITLE" />
+		<result property="cs_writer" column="CS_WRITER" />
+		<result property="cs_show" column="CS_SHOW" />
+		<result property="cs_content" column="CS_CONTENT" />
+		<result property="cs_img" column="CS_IMG" />
+		<result property="cs_regdate" column="CS_REGDATE" />
+		<result property="cs_file" column="CS_FILE" />
+		<result property="member_id" column="MEMBER_ID" />
+	</resultMap>
+	
+	
+
+<!--  sql of Cs~~~~ , can remove <![CDATE[]]? as long as no brackets involved-->
+<!--  고쳐야함 member_ids -->
+	<insert id="insertCs" parameterType="cs"> <!--  parameterType ="cs" refer to typeAlias @ sql-map-config.xml  -->
+			INSERT INTO CS (
+				CS_ID,
+		    	CS_TITLE, 
+		        CS_WRITER, 
+		        CS_SHOW, 
+		        CS_CONTENT,   
+		        CS_IMG,         
+		        CS_FILE,
+		        MEMBER_ID
+		    )
+			VALUES(
+				(SELECT NVL(MAX(CS_ID),0)+1 FROM CS),
+				#{cs_title}, 
+			    #{cs_writer}, 
+			    #{cs_show}, 
+			    #{cs_content},
+			    #{cs_img}, 
+			    #{cs_file},
+			    #{member_id}
+			 )
+	</insert>
+
+	<update id="updateCs"  parameterType="cs">
+			UPDATE CS 
+			SET  
+			CS_TITLE=#{cs_title}, 
+			CS_CONTENT=#{cs_content},
+			CS_IMG=#{cs_img},
+			CS_FILE=#{cs_file}
+			WHERE CS_ID=#{cs_id}
+	</update>
+
+	<delete id="deleteCs">
+			DELETE CS WHERE CS_ID=#{cs_id}
+	</delete>
+	
+	<select id="getCs" resultType="cs"> <!-- resultMap type ="cs"  -->
+		<![CDATA[
+			SELECT * FROM CS WHERE CS_ID = #{cs_id}
+		]]>		
+	</select>
+
+	
+	<!-- 레코드 갯수 계산 -->
+	<select id="getCountCs" resultType="int">
+		SELECT COUNT(*) FROM CS WHERE 1=1 AND
+		<include refid="search"/>
+	</select>
+	
+	<!-- dynamic sql -> 끼워맞춰주기 -->
+	<sql id="search">
+		<choose>
+			<when test="searchCondition =='CS_ALL'">
+			 	(CS_TITLE LIKE '%' || #{searchKeyword} || '%' 
+				OR CS_CONTENT LIKE '%' || #{searchKeyword} || '%' 
+				OR CS_WRITER LIKE '%'|| #{searchKeyword} || '%') 
+			</when>  <!--  alternatively, can use <when> & <if>s-->
+			<otherwise>
+				${searchCondition} LIKE  '%' || #{searchKeyword} || '%'
+			</otherwise>
+		</choose>	
+	</sql>	
+	
+	<!--  list all  -->
+	<select id="getCsList" resultType="cs"> 
+		SELECT CS_ID, CS_TITLE, CS_WRITER, CS_SHOW, CS_REGDATE FROM (
+			SELECT CS_ID, CS_TITLE, CS_WRITER, CS_SHOW, CS_REGDATE, 
+			ROW_NUMBER() OVER (ORDER BY CS_ID DESC) AS rn FROM CS
+			WHERE 1 = 1 AND
+			<include refid="search"/> 
+ 		) CS 
+  		WHERE rn BETWEEN #{start} AND #{end} 
+		ORDER BY CS_ID DESC
+	</select>	
+	
+</mapper>

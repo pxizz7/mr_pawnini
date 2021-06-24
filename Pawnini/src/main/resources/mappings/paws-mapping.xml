@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PawsDAO">
+
+	<!-- ResultSet 과 같은 역활 -->
+	<resultMap id="pawsResult" type="paws" >
+		<id property="paws_id" column="PAWS_ID" />
+		<result property="paws_f_code" column="PAWS_F_CODE" />
+		<result property="paws_s_code" column="PAWS_S_CODE" />
+		<result property="paws_name" column="PAWS_NAME" />
+		<result property="paws_age" column="PAWS_AGE" />
+		<result property="paws_img" column="PAWS_IMG" />
+		<result property="paws_desc" column="PAWS_DESC" />
+		<result property="paws_regdate" column="PAWS_REGDATE" />
+		<result property="paws_sex" column="PAWS_SEX" />
+		<result property="paws_is_neutered" column="PAWS_IS_NEUTERED" />
+		<result property="paws_health" column="PAWS_HEALTH" />
+	</resultMap>
+	
+	<!-- 동물 정보 입력 -->
+	<insert id="insertPaws" parameterType="paws">
+	
+		INSERT INTO PAWS
+		(
+		PAWS_ID,
+		PAWS_F_CODE,
+		PAWS_S_CODE,
+		PAWS_NAME,
+		PAWS_AGE,
+		PAWS_IMG,
+		PAWS_DESC,
+		PAWS_SEX,
+		PAWS_IS_NEUTERED,
+		PAWS_HEALTH,
+		PAWS_THUMB_IMG
+		)
+		VALUES(
+		(SELECT NVL(MAX(PAWS_ID),0)+1 FROM PAWS),
+		#{paws_f_code},
+		#{paws_s_code},
+		#{paws_name},
+		#{paws_age},
+		#{paws_img},
+		#{paws_desc},
+		#{paws_sex},
+		#{paws_is_neutered},
+		#{paws_health},
+		#{paws_thumb_img}
+		)
+
+	</insert>
+	
+	<!-- 동물 정보 수정 -->
+	<update id="updatePaws">
+		<![CDATA[
+		UPDATE PAWS SET
+			PAWS_F_CODE=#{paws_f_code},
+			PAWS_S_CODE=#{paws_s_code},
+			PAWS_NAME=#{paws_name},
+			PAWS_AGE=#{paws_age},
+			PAWS_DESC=#{paws_desc},
+			PAWS_SEX=#{paws_sex},
+			PAWS_IS_NEUTERED=#{paws_is_neutered},
+			PAWS_HEALTH=#{paws_health}
+		WHERE PAWS_ID=#{paws_id}
+		]]>
+	</update>
+	
+	<!-- 동물 정보 삭제 -->	
+	<delete id="deletePaws">
+		<![CDATA[
+		DELETE PAWS
+		WHERE
+		PAWS_ID=#{paws_id}
+		]]>
+	</delete>
+	
+	<!-- 동물 정보 상세 보기 -->
+	<select id="getPaws" resultType="paws">
+		<![CDATA[
+		SELECT *
+		FROM PAWS
+		WHERE
+		PAWS_ID= #{paws_id}
+		]]>
+	</select>
+	
+	<!-- 등록 리스트 불러오기 -->
+	<select id="getPawsList" resultMap="pawsResult">
+		SELECT *
+		FROM PAWS
+		ORDER BY PAWS_ID DESC
+	<!--ORDER BY DBMS_RANDOM.VALUE-->
+	</select>
+	
+	<!-- 강아지 등록 리스트 불러오기 -->
+	<select id="getDogList" resultMap="pawsResult">
+		SELECT *
+		FROM PAWS
+		WHERE PAWS_F_CODE ='DOG'
+		ORDER BY PAWS_ID DESC
+	<!--ORDER BY DBMS_RANDOM.VALUE-->
+	</select>
+	
+	<!-- 고양이 등록 리스트 불러오기 -->
+	<select id="getCatList" resultMap="pawsResult">
+		SELECT *
+		FROM PAWS
+		WHERE PAWS_F_CODE ='CAT'
+		ORDER BY PAWS_ID DESC
+	<!--ORDER BY DBMS_RANDOM.VALUE-->
+	</select>
+
+	
+
+
+</mapper>

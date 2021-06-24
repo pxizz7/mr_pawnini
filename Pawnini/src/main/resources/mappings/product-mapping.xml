@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProductDAO">
+
+	<resultMap id="productResult" type="product" >
+		<id property="product_id" column="PRODUCT_ID"/>
+		<result property="product_f_code" column="PRODUCT_F_CODE"/>
+		<result property="product_s_code" column="PRODUCT_S_CODE"/>
+		<result property="product_t_code" column="PRODUCT_T_CODE"/>
+		<result property="product_t_code2" column="PRODUCT_T_CODE2"/>
+		<result property="product_brand" column="PRODUCT_BRAND"/>
+		<result property="product_name" column="PRODUCT_NAME"/>
+		<result property="product_option" column="PRODUCT_OPTION"/>
+		<result property="product_img" column="PRODUCT_IMG"/>
+		<result property="product_thumb_img" column="PRODUCT_THUMB_IMG"/>
+		<result property="product_desc" column="PRODUCT_DESC"/>
+		<result property="product_stock" column="PRODUCT_STOCK"/>
+		<result property="product_price" column="PRODUCT_PRICE"/>
+		<result property="product_date" column="PRODUCT_DATE"/>
+		<result property="product_hits" column="PRODUCT_HITS"/>
+		<result property="product_price" column="PRODUCT_PRICE"/>
+		<result property="product_c_price" column="PRODUCT_C_PRICE"/>
+	</resultMap>
+	
+	<!-- 상품 등록 -->
+	<insert id="insertProduct" parameterType="product">
+		INSERT INTO PRODUCT (
+			PRODUCT_ID,
+			PRODUCT_F_CODE,
+			PRODUCT_S_CODE,
+			PRODUCT_T_CODE,
+			PRODUCT_T_CODE2,
+			PRODUCT_BRAND,
+			PRODUCT_NAME,
+			PRODUCT_OPTION,
+			PRODUCT_IMG,
+			PRODUCT_THUMB_IMG,
+			PRODUCT_DESC,
+			PRODUCT_STOCK,
+			PRODUCT_PRICE,
+			PRODUCT_C_PRICE
+		) VALUES (
+			(SELECT NVL(MAX(PRODUCT_ID),0)+1 FROM PRODUCT),
+			#{product_f_code},
+			#{product_s_code},
+			#{product_t_code},
+			#{product_t_code2},
+			#{product_brand},
+			#{product_name},
+			#{product_option},
+			#{product_img},
+			#{product_thumb_img},
+			#{product_desc},
+			#{product_stock},
+			#{product_price},
+			#{product_c_price}
+		)		
+	</insert>
+	
+	<!-- 상품정보 수정 -->
+	<update id="updateProduct">
+		UPDATE PRODUCT
+		SET
+		PRODUCT_F_CODE=#{product_f_code},
+		PRODUCT_S_CODE=#{product_s_code},
+		PRODUCT_T_CODE=#{product_t_code},
+		PRODUCT_T_CODE2=#{product_t_code2},
+		PRODUCT_BRAND=#{product_brand},
+		PRODUCT_NAME=#{product_name},
+		PRODUCT_OPTION=#{product_option},
+		PRODUCT_IMG=#{product_img},
+		PRODUCT_THUMB_IMG=#{product_thumb_img},
+		PRODUCT_DESC=#{product_desc},
+		PRODUCT_STOCK=#{product_stock},
+		PRODUCT_PRICE=#{product_price},
+		PRODUCT_C_PRICE=#{product_c_price}
+		WHERE
+		PRODUCT_ID=#{product_id}
+	</update>
+	
+	<!-- 상품 삭제 -->
+	<delete id="deleteProduct">
+		<![CDATA[
+		DELETE PRODUCT
+		WHERE
+		PRODUCT_ID=#{product_id}
+		]]>
+	</delete>	
+	
+	<!-- 등록 리스트 불러오기 -->
+	<select id="getProductList" resultMap="productResult" parameterType="productCriteria" >
+		SELECT *
+		FROM (
+				SELECT 
+				PRODUCT_ID,
+				PRODUCT_F_CODE,
+				PRODUCT_S_CODE,
+				PRODUCT_T_CODE,
+				PRODUCT_T_CODE2,
+				PRODUCT_BRAND,
+				PRODUCT_NAME,
+				PRODUCT_OPTION,
+				PRODUCT_IMG,
+				PRODUCT_THUMB_IMG,
+				PRODUCT_DESC,
+				PRODUCT_STOCK,
+				PRODUCT_PRICE,
+				PRODUCT_DATE,
+				PRODUCT_HITS,
+				PRODUCT_C_PRICE,
+				ROW_NUMBER() OVER(ORDER BY PRODUCT_ID DESC) AS RNUM
+				FROM PRODUCT
+				WHERE 1=1
+				<include refid="search"/>		
+				)
+		WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
+		ORDER BY PRODUCT_ID DESC
+	</select>
+	
+	<!-- 상품 등록수  -->
+	<select id="getCountProduct" resultType="int" parameterType="productCriteria">
+		SELECT COUNT(PRODUCT_ID) 
+		FROM PRODUCT
+		WHERE 1=1
+		<include refid="search"/>
+		AND PRODUCT_ID > 0
+	</select>
+	
+	
+	<!-- 상세 정보 불러오기 -->
+	<select id="getProduct" resultType="product">
+		SELECT *
+		FROM PRODUCT
+		WHERE
+		PRODUCT_ID = #{product_id}
+	</select>
+	
+	<!-- 상품 조회수 -->
+	<update id="productHits" parameterType="int">
+		UPDATE PRODUCT
+		SET
+		PRODUCT_HITS = PRODUCT_HITS+1
+		WHERE
+		PRODUCT_ID=#{product_id}
+	</update>
+	
+	<!-- 검색용 sql -->
+	<sql id="search">
+		<!-- 1차 카테고리가 null 값이 아닌경우 -->
+		<if test="searchOption != null">
+			<!-- 1차 카테고리가 dog 인경우 -->
+			<if test="searchOption == 'dog'.toString()">
+				AND UPPER(PRODUCT_F_CODE) LIKE '%' ||UPPER(#{searchOption})|| '%'
+				
+				<!-- 2차 카테고리가 null 값 인경우 1차 카테고리 까지만 검색 -->
+				<if test="searchKeyword !=null">
+					AND UPPER(PRODUCT_S_CODE) LIKE '%' ||UPPER(#{searchKeyword})|| '%'
+					<!-- 3차 카테고리 검색용 -->
+					<if test="searchKeyword3 != null">
+						AND UPPER(PRODUCT_T_CODE) LIKE '%' ||UPPER(#{searchKeyword3})|| '%'
+					</if>
+				</if>
+				
+				<!-- 상품 이름 검색 -->
+				<if test="searchKeyword2 !=null">
+					AND UPPER(PRODUCT_NAME) LIKE '%' ||UPPER(#{searchKeyword2})|| '%'
+				</if>
+				
+				
+			</if>	
+				
+			<!-- 1차 카테고리가 cat 인경우 -->
+			<if test="searchOption == 'cat'.toString()">
+				AND UPPER(PRODUCT_F_CODE) LIKE '%' ||UPPER(#{searchOption})|| '%'
+				
+				<!-- 2차 카테고리가 null 값 인경우 1차 카테고리 까지만 검색 -->
+				<if test="searchKeyword !=null">
+					AND UPPER(PRODUCT_S_CODE) LIKE '%' ||UPPER(#{searchKeyword})|| '%'
+					<!-- 3차 카테고리 검색용 -->
+					<if test="searchKeyword3 != null">
+						AND UPPER(PRODUCT_T_CODE) LIKE '%' ||UPPER(#{searchKeyword3})|| '%'
+					</if>
+				</if>
+				
+				<!-- 상품 이름 검색 -->
+				<if test="searchKeyword2 !=null">
+					AND UPPER(PRODUCT_NAME) LIKE '%' ||UPPER(#{searchKeyword2})|| '%'
+				</if>
+			</if>		
+		</if>
+	</sql>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
