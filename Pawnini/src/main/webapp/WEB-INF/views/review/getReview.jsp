@@ -186,8 +186,10 @@
                </p>
                <p>${replyList.rev_com_content}</p>
                <div>
-               	<c:if test="${replyList.rev_com_writer eq member.member_id || member.member_grade eq '2'}">
+                <c:if test="${replyList.rev_com_writer eq member.member_id}">
                   <button type="button" class="reviewReplyUpdateBtn btn btn-warning" data-rno="${replyList.rev_com_id}">수정</button>
+                </c:if>
+               	<c:if test="${replyList.rev_com_writer eq member.member_id || member.member_grade eq '2'}">
                   <button type="button" class="reviewReplyDeleteBtn btn btn-danger" data-rno="${replyList.rev_com_id}">삭제</button>
              	</c:if>
                </div>

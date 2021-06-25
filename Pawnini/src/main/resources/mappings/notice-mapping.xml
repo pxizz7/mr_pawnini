@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NoticeDAO">
+
+	<resultMap id="noticeResult" type="notice">
+		<id property="notice_id" column="NOTICE_ID" />
+		<result property="notice_name" column="NOTICE_NAME" />
+		<result property="notice_title" column="NOTICE_TITLE" />
+		<result property="notice_content" column="NOTICE_CONTENT" />
+		<result property="notice_date" column="NOTICE_DATE" />
+
+	</resultMap>
+
+	<insert id="insertNotice">
+		<![CDATA[
+		INSERT INTO NOTICE(NOTICE_ID, NOTICE_TITLE, NOTICE_NAME, NOTICE_CONTENT)
+		VALUES((SELECT NVL(MAX(NOTICE_ID), 0) + 1 FROM NOTICE),
+		#{notice_title}, #{notice_name}, #{notice_content})
+		]]>
+	</insert>
+
+	<update id="updateNotice">
+		<![CDATA[
+		UPDATE NOTICE SET NOTICE_TITLE=#{notice_title}, NOTICE_CONTENT=#{notice_content} WHERE NOTICE_ID=#{notice_id}
+		]]>
+	</update>
+
+	<delete id="deleteNotice">
+		<![CDATA[
+		DELETE NOTICE WHERE NOTICE_ID=#{notice_id}
+		]]>
+	</delete>
+
+	<select id="getNotice" resultType="notice">
+		<![CDATA[
+		SELECT * FROM NOTICE WHERE NOTICE_ID=#{notice_id}
+		]]>
+	</select>
+
+	<select id="getNoticeList"  resultType="notice">
+		<![CDATA[
+		SELECT * FROM NOTICE
+		ORDER BY NOTICE_ID DESC
+		]]>
+	</select>
+</mapper>
+	
+	
+

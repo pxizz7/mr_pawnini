@@ -33,7 +33,7 @@
  	
  	<c:set var="grade" value="${member.member_grade}"/>
     <c:if test="${member != null}">
-    	<li><span id="nickname"></span>님 환영 합니다.</li>
+    	<li>${member.member_nickname}님 환영 합니다.</li>
         <li><a href="myPage.do">My Pages</a></li>
         <li><a href="logout.do">Logout</a></li>
         <li> <a class="basket" href="basket.do">
@@ -88,7 +88,6 @@
           </span>
         </li>
         <li><a href="event.do">이벤트</a></li>
-        <li><a href="service.do">고객센터</a></li>
 
         <li class="Dog_dropmenu">
           <a href="adoption.do">분양</a>
@@ -98,6 +97,8 @@
           </span>
         </li>
         <li><a href="getReviewList.do">후기</a></li>
+        <li><a href="getNoticeList.do">공지사항</a></li>
+        <li><a href="getCsList.do">고객센터</a></li>
       </ul>
     </header>
         <script

@@ -6,94 +6,166 @@
 
 	<resultMap type="cs" id="csResult">
 		<id property="cs_id" column="CS_ID" />
+		<result property="cs_parent_cs_id" column="CS_PARENT_CS_ID" />		
+		<result property="cs_re_group" column="CS_RE_GROUP" />
+		<result property="cs_re_order" column="CS_RE_ORDER" />
+		<result property="cs_re_depth" column="CS_RE_DEPTH" />		
 		<result property="cs_title" column="CS_TITLE" />
 		<result property="cs_writer" column="CS_WRITER" />
 		<result property="cs_show" column="CS_SHOW" />
 		<result property="cs_content" column="CS_CONTENT" />
-		<result property="cs_img" column="CS_IMG" />
+		<result property="cs_fileName" column="CS_FILENAME"/>
 		<result property="cs_regdate" column="CS_REGDATE" />
-		<result property="cs_file" column="CS_FILE" />
 		<result property="member_id" column="MEMBER_ID" />
 	</resultMap>
 	
 	
-
+	<!-- 그룹 더해주기 -->
+	<select id="getCsGroup" parameterType="cs" resultType="int">
+		SELECT NVL(MAX(CS_RE_GROUP), 0)+1 FROM CS
+	</select>
 <!--  sql of Cs~~~~ , can remove <![CDATE[]]? as long as no brackets involved-->
-<!--  고쳐야함 member_ids -->
-	<insert id="insertCs" parameterType="cs"> <!--  parameterType ="cs" refer to typeAlias @ sql-map-config.xml  -->
+	<insert id="insertCs" parameterType="cs">
 			INSERT INTO CS (
 				CS_ID,
+		    	CS_RE_GROUP,
+		    	CS_RE_ORDER,
+		    	CS_RE_DEPTH,
 		    	CS_TITLE, 
 		        CS_WRITER, 
 		        CS_SHOW, 
 		        CS_CONTENT,   
-		        CS_IMG,         
-		        CS_FILE,
+		        CS_FILENAME,
 		        MEMBER_ID
 		    )
 			VALUES(
-				(SELECT NVL(MAX(CS_ID),0)+1 FROM CS),
+				(SELECT NVL(MAX(CS_ID), 0)+1 FROM CS),
+				#{cs_re_group},
+				0,
+				0,
 				#{cs_title}, 
 			    #{cs_writer}, 
 			    #{cs_show}, 
-			    #{cs_content},
-			    #{cs_img}, 
-			    #{cs_file},
+			   #{cs_content},
+			    #{cs_fileName, jdbcType=VARCHAR},
 			    #{member_id}
 			 )
 	</insert>
 
+
 	<update id="updateCs"  parameterType="cs">
-			UPDATE CS 
-			SET  
-			CS_TITLE=#{cs_title}, 
-			CS_CONTENT=#{cs_content},
-			CS_IMG=#{cs_img},
-			CS_FILE=#{cs_file}
+			UPDATE CS SET  
+			CS_TITLE=#{cs_title},
+			CS_SHOW=#{cs_show},
+			CS_CONTENT=#{cs_content}
 			WHERE CS_ID=#{cs_id}
 	</update>
 
 	<delete id="deleteCs">
-			DELETE CS WHERE CS_ID=#{cs_id}
+			DELETE FROM CS WHERE 
+			CS_ID IN (
+				SELECT CS_ID FROM CS
+				START WITH CS_ID = #{cs_id}
+				CONNECT BY PRIOR CS_ID = CS_PARENT_CS_ID
+			)			
 	</delete>
 	
 	<select id="getCs" resultType="cs"> <!-- resultMap type ="cs"  -->
-		<![CDATA[
-			SELECT * FROM CS WHERE CS_ID = #{cs_id}
-		]]>		
+			SELECT 
+				PREV_CS_ID, PREV_CS_TITLE, NEXT_CS_ID, NEXT_CS_TITLE,
+				CS_ID, CS_RE_GROUP, CS_RE_ORDER, CS_RE_DEPTH, CS_TITLE, CS_WRITER, CS_REGDATE, CS_SHOW, CS_CONTENT, CS_FILENAME, MEMBER_ID FROM 
+			(
+				SELECT 
+				LAG(CS_ID, 1) OVER (ORDER BY (CS_ID+CS_RE_GROUP)) AS PREV_CS_ID,
+				LAG(CS_TITLE, 1) OVER (ORDER BY (CS_ID+CS_RE_GROUP)) AS PREV_CS_TITLE,
+				LEAD(CS_ID, 1) OVER (ORDER BY (CS_ID+CS_RE_GROUP)) AS NEXT_CS_ID,
+				LEAD(CS_TITLE, 1) OVER (ORDER BY (CS_ID+CS_RE_GROUP)) AS NEXT_CS_TITLE,
+				CS_ID, CS_RE_GROUP, CS_RE_ORDER, CS_RE_DEPTH, CS_TITLE, CS_WRITER, CS_REGDATE, CS_SHOW, CS_CONTENT, CS_FILENAME, MEMBER_ID FROM 
+				CS
+			) CS 
+			WHERE CS_ID = #{cs_id} 
+			ORDER BY CS_ID DESC		
 	</select>
 
+	<!-- 조회수 올리기 -->
+	<update id="csHit">
+		UPDATE CS SET CS_HIT = CS_HIT + 1 WHERE CS_ID = #{cs_id}
+	</update>
 	
-	<!-- 레코드 갯수 계산 -->
+	<!-- 레코드 갯수 계searchOption산 -->
 	<select id="getCountCs" resultType="int">
-		SELECT COUNT(*) FROM CS WHERE 1=1 AND
+		 SELECT COUNT(CS_ID) FROM CS 
+		 WHERE 1=1 
 		<include refid="search"/>
+		<![CDATA[AND CS_ID > 0]]>
 	</select>
 	
 	<!-- dynamic sql -> 끼워맞춰주기 -->
 	<sql id="search">
-		<choose>
-			<when test="searchCondition =='CS_ALL'">
-			 	(CS_TITLE LIKE '%' || #{searchKeyword} || '%' 
-				OR CS_CONTENT LIKE '%' || #{searchKeyword} || '%' 
-				OR CS_WRITER LIKE '%'|| #{searchKeyword} || '%') 
-			</when>  <!--  alternatively, can use <when> & <if>s-->
-			<otherwise>
-				${searchCondition} LIKE  '%' || #{searchKeyword} || '%'
-			</otherwise>
-		</choose>	
+		<if test="searchOption != null">
+			<if test="searchOption == 't'.toString()">AND LOWER(CS_TITLE) LIKE '%' ||LOWER( #{ searchKeyword }) || '%'</if>	
+			<if test="searchOption == 'w'.toString()">AND LOWER(CS_WRITER) LIKE '%' || LOWER(#{ searchKeyword }) || '%'</if>		
+			<if test="searchOption == 'c'.toString()">AND LOWER(CS_CONTENT) LIKE '%' || LOWER(#{ searchKeyword }) || '%'</if>		
+			<if test="searchOption == 'twc'.toString()">AND (LOWER(CS_TITLE) LIKE '%' || LOWER(#{ searchKeyword }) || '%') OR (LOWER(CS_WRITER) LIKE '%' || LOWER(#{ searchKeyword }) || '%') OR (LOWER(CS_CONTENT) LIKE '%' || LOWER(#{ searchKeyword }) || '%')</if>		
+		</if>
 	</sql>	
-	
+
 	<!--  list all  -->
-	<select id="getCsList" resultType="cs"> 
-		SELECT CS_ID, CS_TITLE, CS_WRITER, CS_SHOW, CS_REGDATE FROM (
-			SELECT CS_ID, CS_TITLE, CS_WRITER, CS_SHOW, CS_REGDATE, 
-			ROW_NUMBER() OVER (ORDER BY CS_ID DESC) AS rn FROM CS
-			WHERE 1 = 1 AND
-			<include refid="search"/> 
- 		) CS 
-  		WHERE rn BETWEEN #{start} AND #{end} 
-		ORDER BY CS_ID DESC
+	<select id="getCsList" parameterType="csSearchCriteria" resultType="cs"> 
+	SELECT * FROM 
+		(SELECT ROWNUM  AS rn, data.* FROM 
+			(
+				SELECT LEVEL, 
+						CS_ID, CS_PARENT_CS_ID, CS_RE_GROUP, CS_RE_ORDER, CS_RE_DEPTH, CS_TITLE, CS_WRITER, CS_SHOW, CS_REGDATE, MEMBER_ID
+						FROM CS 
+						WHERE 1 = 1
+						<include refid="search"/>		
+						START WITH CS_PARENT_CS_ID = 0
+						CONNECT BY PRIOR CS_ID = CS_PARENT_CS_ID 
+						ORDER SIBLINGS BY CS_RE_GROUP DESC
+			) 
+		data	) 
+	WHERE rn BETWEEN #{start} AND #{end} 
 	</select>	
 	
+
+	<!-- 댓글 정보 가져오기 -->
+	<select id="getCsReplyInfo" parameterType="cs" resultType="cs">
+		SELECT CS_ID, CS_RE_GROUP, CS_RE_ORDER, CS_RE_DEPTH FROM CS WHERE CS_ID = #{cs_parent_cs_id}
+	</select>
+	<!--  댓글 순서 업데잇 (계층형) -->
+	<update id="updateCsDepth">
+		UPDATE CS SET 
+		CS_RE_DEPTH = CS_RE_DEPTH +1 
+		WHERE CS_RE_GROUP = #{cs_re_group} 
+		AND CS_RE_DEPTH > #{cs_re_depth}
+	</update>
+	<!-- 댓급 추가 -->
+	<select id="insertCsReply" parameterType="cs">
+		INSERT INTO CS (
+		CS_ID,
+		CS_RE_GROUP, 
+		CS_RE_ORDER, 
+		CS_RE_DEPTH, 
+		CS_PARENT_CS_ID,
+		CS_TITLE, 
+		CS_WRITER, 
+		CS_SHOW, 
+		CS_CONTENT, 
+		 CS_FILENAME,
+		 MEMBER_ID
+		) VALUES (
+		(SELECT NVL(MAX(CS_ID), 0)+1 FROM CS),
+		#{cs_re_group}, 
+		#{cs_re_order}+1, 
+		#{cs_re_depth}+1,
+		#{cs_id},
+		#{cs_title},
+		 #{cs_writer},
+		  #{cs_show}, 
+		  #{cs_content},
+		  #{cs_fileName},
+		  #{member_id}
+		  )
+	</select>
 </mapper>

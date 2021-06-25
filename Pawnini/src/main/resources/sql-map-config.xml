@@ -8,7 +8,7 @@
 	<typeAliases>
 		<typeAlias alias="paws" type="com.pawnini.model.paws.PawsDTO"/>
 		<typeAlias alias="cs" type="com.pawnini.model.cs.CsDTO"/>
-		<typeAlias alias="cs_reply" type="com.pawnini.model.cs.Cs_replyDTO"/>
+		<typeAlias alias="csSearchCriteria" type="com.pawnini.model.cs.CsSearchCriteria"/>
 		<typeAlias alias="review" type="com.pawnini.model.review.ReviewDTO"/>
 		<typeAlias alias="reviewCriteria" type="com.pawnini.model.review.SearchCriteria"/>
 		<typeAlias alias="reviewReply" type="com.pawnini.model.review.ReviewReplyDTO"/>
@@ -21,12 +21,12 @@
 		<typeAlias alias="product_inq" type="com.pawnini.model.product_inq.Product_inqDTO"/>
 		<typeAlias alias="inq_rep" type="com.pawnini.model.product_inq.Inq_repDTO"/>
 		<typeAlias alias="product_inqCriteria" type="com.pawnini.model.product_inq.SearchCriteria"/>
+		<typeAlias alias="notice" type="com.pawnini.model.notice.NoticeDTO"/>
 	</typeAliases>
 	
 	<!-- Sql Mapper 설정 -->
 	<mappers>
 		<mapper resource="mappings/cs-mapping.xml"/>
-		<mapper resource="mappings/cs_reply-mapping.xml"/>
 		<mapper resource="mappings/paws-mapping.xml"/>
 		<mapper resource="mappings/review-mapping.xml"/>		
 		<mapper resource="mappings/review-reply-mapping.xml"/>		
@@ -34,7 +34,8 @@
 		<mapper resource="mappings/product-mapping.xml"/>
 		<mapper resource="mappings/cart-mapping.xml"/>
 		<mapper resource="mappings/product_inq-mapping.xml"/>
-		<mapper resource="mappings/inq_rep-mapping.xml"/> 
+		<mapper resource="mappings/inq_rep-mapping.xml"/>
+		<mapper resource="mappings/notice-mapping.xml"/> 
 	</mappers>
 	
 </configuration>

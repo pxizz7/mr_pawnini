@@ -14,7 +14,6 @@
 	<a href="/review/getReviewList.do">후기</a>
 	<a href="login.jsp">로그인</a>
 	<a href="getProductList.do">상품리스트</a>
-	<a href="getProduct_inqList.do">상품문의목록</a>
 </div>
 </body>
 </html>

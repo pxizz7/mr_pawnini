@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -32,7 +32,11 @@
     </div>
     <div align="center">
        
-       <h1> 상품 관리 리스트 </h1>
+       <h1> 상품 관리 </h1>
+       <div class="button">
+       <a href="goInsertProduct.do">신규 등록</a><br>
+       <a href="goProductList.do">상품페이지</a>
+      </div>
        <span>등록된 상품 수 : ${pageMaker.totalCount} 개</span>
        <table border="1">
           <tr class="head">
@@ -62,17 +66,14 @@
              <td>${product.product_name}
              <td>${product.product_option}
              <td>${product.product_stock}
-             <td>${product.product_price}
+             <td><fmt:formatNumber pattern="###,###,###" value="${product.product_price}" /> 원
              <td>${product.product_hits}
              <td>${product.product_date}
              <td><a href="getProduct.do?product_id=${product.product_id}">수정</a>
              <td><a href="deleteProduct.do?product_id=${product.product_id}">삭제</a>
           </c:forEach>
        </table>
-       <div class="button">
-       <a href="goInsertProduct.do">신규 등록</a><br>
-       <a href="goProductList.do">상품페이지</a>
-      </div>
+      
     </div>
       <div>
 			<ul class="pagination">

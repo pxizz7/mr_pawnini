@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+    
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -74,6 +76,7 @@
 	            	<a href="goProductList.do?searchOption=cat&searchKeyword=snack&searchKeyword3=육포/사사미"><li>육포/사사미</li></a>
 	            	<a href="goProductList.do?searchOption=cat&searchKeyword=snack&searchKeyword3=껌/뼈"><li>껌/뼈</li></a>
 	            	<a href="goProductList.do?searchOption=cat&searchKeyword=snack&searchKeyword3=빵/비스켓"><li>빵/비스켓</li></a>
+	            	<a href="goProductList.do?searchOption=cat&searchKeyword=snack&searchKeyword3=캔디"><li>캔디</li></a>
           		</ul>
     		</div>
 		</c:if>
@@ -98,8 +101,8 @@
           <a href="detailProduct.do?product_id=${product.product_id}">
             <img class="product_img" src="${product.product_thumb_img}" />
              <ul class="product_list">
-              <li class="product_title">상품명 : ${product.product_name}</li>
-              <li class="product_cash">가격 :${product.product_price} 원</li>
+              <li class="product_title">${product.product_name}</li>
+              <li class="product_cash">가격 <fmt:formatNumber pattern="###,###,###" value="${product.product_price}" /> 원</li>
               <li class="product_rank">재고 : ${product.product_stock }</li>
             </ul>
           </a>

@@ -19,7 +19,8 @@
 			<tr>
 				<td>1차 분류 : 
 					<select name="product_f_code" id="categori1"  class="option">
-						<option value="DOG" selected="selected">강아지</option>
+						<option value="" selected="selected">--선택--</option>
+						<option value="DOG">강아지</option>
 						<option value="CAT">고양이</option>
 					</select>
 				</td>
@@ -28,6 +29,7 @@
 				<td>2차 분류 :
 				<div class="dog" > 
 					<select name="product_s_code" id="product_s_code_dog" class="option">
+						<option value="" selected="selected">--선택--</option>
 						<option value="MEAL">사료</option> 
 						<option value="SNACK">간식</option> 
 						<option value="SUPPLIES">강아지용품</option> 
@@ -35,6 +37,7 @@
 				</div>
 				<div class="cat" hidden="hide">
 					<select name="product_s_code" id="product_s_code_cat" disabled="disabled" class="option">
+						<option value="" selected="selected">--선택--</option>
 						<option value="MEAL">사료</option> 
 						<option value="SNACK">간식</option> 
 						<option value="SUPPLIES">고양이용품</option> 
@@ -46,12 +49,14 @@
 				<td>3-1차분류 : 
 				<div class="dog_meal" >
 					<select name="product_t_code" id="product_t_code_dog_meal" class="option">
+						<option value="" selected="selected">--선택--</option>
 						<option value="건식">건식</option>
 						<option value="습식">습식</option>
 					</select>
 				</div>
 				<div class="dog_snack" hidden="hide">
 					<select name="product_t_code" id="product_t_code_dog_snack" disabled="disabled" class="option">
+						<option value="" selected="selected">--선택--</option>
 						<option value="껌">껌</option>
 						<option value="사사미">사사미</option>
 						<option value="저키/트릿">저키/트릿</option>
@@ -62,6 +67,7 @@
 				</div>
 				<div class="dog_supplies" hidden="hide">
 					<select name="product_t_code" id="product_t_code_dog_supplies" disabled="disabled" class="option">
+						<option value="" selected="selected">--선택--</option>
 						<option value="의류/악세사리">의류/악세사리</option>
 						<option value="식기/이동장">식기/이동장</option>
 						<option value="집/방석">집/방석</option>
@@ -72,21 +78,25 @@
 				</div>
 				<div class="cat_meal" hidden="hide">
 					<select name="product_t_code" id="product_t_code_cat_meal" disabled="disabled" class="option">
+						<option value="" selected="selected">--선택--</option>
 						<option value="건식">건식</option>
 						<option value="습식">습식</option>
 					</select>
 				</div>
 				<div class="cat_snack" hidden="hide">
 					<select name="product_t_code" id="product_t_code_cat_snack" disabled="disabled" class="option">
+						<option value="" selected="selected">--선택--</option>
 						<option value="수제">수제간식</option>
 						<option value="츄르">츄르</option>
 						<option value="육포/사사미">육포/사사미</option>
 						<option value="껌/뼈">껌/뼈</option>
 						<option value="빵/비스켓">빵/비스켓</option>
+						<option value="캔디">캔디</option>
 					</select>
 				</div>
 				<div class="cat_supplies" hidden="hide">
 					<select name="product_t_code" id="product_t_code_cat_supplies" disabled="disabled" class="option">
+						<option value="" selected="selected">--선택--</option>
 						<option value="장난감">장난감</option>
 						<option value="배변/위생">배변/위생</option>
 						<option value="미용/목욕">미용/목욕</option>
